@@ -1,4 +1,6 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/mi798vovy2m9fwjt?svg=true)](https://ci.appveyor.com/project/AlexWEBArt/ahj-trello)
 
+https://alexwebart.github.io/AHJ-Trello/
 
 Правила сдачи задания:
 
