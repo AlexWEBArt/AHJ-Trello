@@ -5,9 +5,67 @@ console.log('app.js is bunled');
 
 document.querySelector('.pictures').src = edit;
 
-const column = Array.from(document.querySelectorAll('.column'));
-const tasks = Array.from(document.querySelectorAll('.task'));
+const columns = Array.from(document.querySelectorAll('.column'));
 const addNewTask = document.querySelectorAll('.add_card');
+
+function createClosedElement() {
+  const div = document.createElement('div');
+  div.classList.add('closed_element');
+  div.textContent = '\u2573';
+
+  return div;
+}
+
+function createShadowElement(element) {
+  const div = document.createElement('div');
+  const {width, height} = element.getBoundingClientRect();
+
+  div.classList.add('shadow_element')
+  
+  div.style.width = width + 'px';
+  div.style.height = height + 'px';
+  return div;
+}
+
+let actualElement;
+
+// const onMouseOver = (e) => {
+//   actualElement.style.top = `${e.clientY}px`;
+//   actualElement.style.left = `${e.clientX}px`;
+// };
+
+const onMouseMove = (evt) => {
+  const target = evt.target;
+
+  actualElement.style.top = `${evt.clientY}px`;
+  actualElement.style.left = `${evt.clientX}px`;
+
+  if(target.classList.contains("task") || target.classList.contains("title")) {
+    const {y, height} = target.getBoundingClientRect();
+    
+    const shadowElement = createShadowElement(document.querySelector('.dragged'))
+    let shadowZone
+
+    if ((y + height / 2) > evt.clientY && !target.classList.contains("title")) {
+    if (document.querySelector('.shadow_element')) {
+        document.querySelector('.shadow_element').remove()
+      }
+      shadowZone = evt.target.previousElementSibling.closest('.task') || evt.target.previousElementSibling.closest('h1')
+      if (shadowZone) {
+        shadowZone.insertAdjacentElement('afterend', shadowElement);
+      }
+    }
+    if ((y + height / 2) < evt.clientY ) {
+      if (document.querySelector('.shadow_element')) {
+        document.querySelector('.shadow_element').remove()
+      }
+      shadowZone = evt.target.nextElementSibling.closest('.task') || evt.target.nextElementSibling.closest('.add_card')
+      if (shadowZone) {
+        shadowZone.insertAdjacentElement('beforebegin', shadowElement);
+      }
+    }
+  }
+}
 
 addNewTask.forEach((item) => {
   item.addEventListener('click', (e) => {
@@ -17,53 +75,78 @@ addNewTask.forEach((item) => {
   });
 });
 
-let actualElement;
-
-const onMouseOver = (e) => {
-  actualElement.style.top = `${e.clientY}px`;
-  actualElement.style.left = `${e.clientX}px`;
-};
-
 const onMouseUp = (e) => {
-  let mouseUpItem = e.target.closest('.task');
-  if (mouseUpItem === null) {
-    mouseUpItem = actualElement;
-  }
-  const actualColumn = mouseUpItem.closest('.column');
+  let mouseUpColomn = e.target.closest('.column');
 
-  actualColumn.insertBefore(actualElement, mouseUpItem);
+  if (e.target.classList.contains('shadow_element')) {
+    const shadowZone = mouseUpColomn.querySelector('.shadow_element');
+    actualElement.style.width = null;
+    actualElement.style.height = null;
+    mouseUpColomn.insertBefore(actualElement, shadowZone);
+  }
 
   actualElement.classList.remove('dragged');
   actualElement = undefined;
 
+  if (document.querySelector('.shadow_element')) {
+    document.querySelector('.shadow_element').remove()
+  }
+
+  document.documentElement.removeEventListener('mousemove', onMouseMove);
   document.documentElement.removeEventListener('mouseup', onMouseUp);
-  document.documentElement.removeEventListener('mouseover', onMouseOver);
+  // document.documentElement.removeEventListener('mouseover', onMouseOver);
+  document.addEventListener('mousemove', taskInFokus)
 };
 
-tasks.forEach((item) => {
-  item.addEventListener('mouseover', () => {
-    // if (!item.querySelector('.conainer_remove')) {
-    //     const conainerRemove = document.createElement('DIV');
+const taskInFokus = (e) => {
+  const taskInFokus = e.target.closest('.task')
+  if (taskInFokus) {
+    const columnInFokus = taskInFokus.closest('.column')
+    const closed = createClosedElement();
 
-    //     conainerRemove.classList.add('conainer_remove');
-    //     conainerRemove.textContent = `\u2573`;
+    const {x, y, width} = taskInFokus.getBoundingClientRect();
 
-    //     item.append(conainerRemove);
+    closed.style.top = `${y + 2}px`;
+    closed.style.left = `${width + x - 17}px`;
 
-    //     conainerRemove.addEventListener('click', () => {
-    //         item.closest('.column').remove(item)
-    //     })
-    // }
-  });
-});
+    if (!columnInFokus.querySelector('.closed_element')) {
+      closed.addEventListener('click', () => {
+        taskInFokus.remove()
+        closed.remove()
+      })
 
-column.forEach((item) => item.addEventListener('mousedown', (e) => {
-  if (e.target.closest('.task')) {
-    e.preventDefault();
-    actualElement = e.target.closest('.task');
-    actualElement.classList.add('dragged');
+      columnInFokus.insertAdjacentElement('afterbegin', closed);
+    }
+  }
 
-    document.documentElement.addEventListener('mouseup', onMouseUp);
-    document.documentElement.addEventListener('mouseover', onMouseOver);
+  if(document.querySelector('.closed_element') && !taskInFokus && e.target !== document.querySelector('.closed_element')) {
+    document.querySelector('.closed_element').remove()
+  }
+}
+
+document.addEventListener('mousemove', taskInFokus)
+
+columns.forEach((item) => item.addEventListener('mousedown', (e) => {
+  if (item.querySelector('.task')) {
+    const {width, height} = item.querySelector('.task').getBoundingClientRect();
+
+    if (e.target.closest('.task')) {
+      e.preventDefault();
+
+      actualElement = e.target.closest('.task');
+      actualElement.classList.add('dragged');
+      
+      document.removeEventListener('mousemove', taskInFokus)
+      if(document.querySelector('.closed_element')) {
+        document.querySelector('.closed_element').remove()
+      }
+
+      actualElement.style.width = width + 'px'
+      actualElement.style.height = height + 'px'
+    
+      document.documentElement.addEventListener("mousemove", onMouseMove)
+      document.documentElement.addEventListener('mouseup', onMouseUp);
+      // document.documentElement.addEventListener('mouseover', onMouseOver);
+    }
   }
 }));
