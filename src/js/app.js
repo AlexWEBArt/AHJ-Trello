@@ -18,12 +18,12 @@ function createClosedElement() {
 
 function createShadowElement(element) {
   const div = document.createElement('div');
-  const {width, height} = element.getBoundingClientRect();
+  const { width, height } = element.getBoundingClientRect();
 
-  div.classList.add('shadow_element')
-  
-  div.style.width = width + 'px';
-  div.style.height = height + 'px';
+  div.classList.add('shadow_element');
+
+  div.style.width = `${width}px`;
+  div.style.height = `${height}px`;
   return div;
 }
 
@@ -35,37 +35,37 @@ let actualElement;
 // };
 
 const onMouseMove = (evt) => {
-  const target = evt.target;
+  const { target } = evt;
 
   actualElement.style.top = `${evt.clientY}px`;
   actualElement.style.left = `${evt.clientX}px`;
 
-  if(target.classList.contains("task") || target.classList.contains("title")) {
-    const {y, height} = target.getBoundingClientRect();
-    
-    const shadowElement = createShadowElement(document.querySelector('.dragged'))
-    let shadowZone
+  if (target.classList.contains('task') || target.classList.contains('title')) {
+    const { y, height } = target.getBoundingClientRect();
 
-    if ((y + height / 2) > evt.clientY && !target.classList.contains("title")) {
-    if (document.querySelector('.shadow_element')) {
-        document.querySelector('.shadow_element').remove()
+    const shadowElement = createShadowElement(document.querySelector('.dragged'));
+    let shadowZone;
+
+    if ((y + height / 2) > evt.clientY && !target.classList.contains('title')) {
+      if (document.querySelector('.shadow_element')) {
+        document.querySelector('.shadow_element').remove();
       }
-      shadowZone = evt.target.previousElementSibling.closest('.task') || evt.target.previousElementSibling.closest('h1')
+      shadowZone = evt.target.previousElementSibling.closest('.task') || evt.target.previousElementSibling.closest('h1');
       if (shadowZone) {
         shadowZone.insertAdjacentElement('afterend', shadowElement);
       }
     }
-    if ((y + height / 2) < evt.clientY ) {
+    if ((y + height / 2) < evt.clientY) {
       if (document.querySelector('.shadow_element')) {
-        document.querySelector('.shadow_element').remove()
+        document.querySelector('.shadow_element').remove();
       }
-      shadowZone = evt.target.nextElementSibling.closest('.task') || evt.target.nextElementSibling.closest('.add_card')
+      shadowZone = evt.target.nextElementSibling.closest('.task') || evt.target.nextElementSibling.closest('.add_card');
       if (shadowZone) {
         shadowZone.insertAdjacentElement('beforebegin', shadowElement);
       }
     }
   }
-}
+};
 
 addNewTask.forEach((item) => {
   item.addEventListener('click', (e) => {
@@ -75,8 +75,34 @@ addNewTask.forEach((item) => {
   });
 });
 
+const taskInFokus = (e) => {
+  const activeTask = e.target.closest('.task');
+  if (activeTask) {
+    const columnInFokus = activeTask.closest('.column');
+    const closed = createClosedElement();
+
+    const { x, y, width } = activeTask.getBoundingClientRect();
+
+    closed.style.top = `${y + 2}px`;
+    closed.style.left = `${width + x - 17}px`;
+
+    if (!columnInFokus.querySelector('.closed_element')) {
+      closed.addEventListener('click', () => {
+        activeTask.remove();
+        closed.remove();
+      });
+
+      columnInFokus.insertAdjacentElement('afterbegin', closed);
+    }
+  }
+
+  if (document.querySelector('.closed_element') && !activeTask && e.target !== document.querySelector('.closed_element')) {
+    document.querySelector('.closed_element').remove();
+  }
+};
+
 const onMouseUp = (e) => {
-  let mouseUpColomn = e.target.closest('.column');
+  const mouseUpColomn = e.target.closest('.column');
 
   if (e.target.classList.contains('shadow_element')) {
     const shadowZone = mouseUpColomn.querySelector('.shadow_element');
@@ -89,62 +115,36 @@ const onMouseUp = (e) => {
   actualElement = undefined;
 
   if (document.querySelector('.shadow_element')) {
-    document.querySelector('.shadow_element').remove()
+    document.querySelector('.shadow_element').remove();
   }
 
   document.documentElement.removeEventListener('mousemove', onMouseMove);
   document.documentElement.removeEventListener('mouseup', onMouseUp);
   // document.documentElement.removeEventListener('mouseover', onMouseOver);
-  document.addEventListener('mousemove', taskInFokus)
+  document.addEventListener('mousemove', taskInFokus);
 };
 
-const taskInFokus = (e) => {
-  const taskInFokus = e.target.closest('.task')
-  if (taskInFokus) {
-    const columnInFokus = taskInFokus.closest('.column')
-    const closed = createClosedElement();
-
-    const {x, y, width} = taskInFokus.getBoundingClientRect();
-
-    closed.style.top = `${y + 2}px`;
-    closed.style.left = `${width + x - 17}px`;
-
-    if (!columnInFokus.querySelector('.closed_element')) {
-      closed.addEventListener('click', () => {
-        taskInFokus.remove()
-        closed.remove()
-      })
-
-      columnInFokus.insertAdjacentElement('afterbegin', closed);
-    }
-  }
-
-  if(document.querySelector('.closed_element') && !taskInFokus && e.target !== document.querySelector('.closed_element')) {
-    document.querySelector('.closed_element').remove()
-  }
-}
-
-document.addEventListener('mousemove', taskInFokus)
+document.addEventListener('mousemove', taskInFokus);
 
 columns.forEach((item) => item.addEventListener('mousedown', (e) => {
   if (item.querySelector('.task')) {
-    const {width, height} = item.querySelector('.task').getBoundingClientRect();
+    const { width, height } = item.querySelector('.task').getBoundingClientRect();
 
     if (e.target.closest('.task')) {
       e.preventDefault();
 
       actualElement = e.target.closest('.task');
       actualElement.classList.add('dragged');
-      
-      document.removeEventListener('mousemove', taskInFokus)
-      if(document.querySelector('.closed_element')) {
-        document.querySelector('.closed_element').remove()
+
+      document.removeEventListener('mousemove', taskInFokus);
+      if (document.querySelector('.closed_element')) {
+        document.querySelector('.closed_element').remove();
       }
 
-      actualElement.style.width = width + 'px'
-      actualElement.style.height = height + 'px'
-    
-      document.documentElement.addEventListener("mousemove", onMouseMove)
+      actualElement.style.width = `${width}px`;
+      actualElement.style.height = `${height}px`;
+
+      document.documentElement.addEventListener('mousemove', onMouseMove);
       document.documentElement.addEventListener('mouseup', onMouseUp);
       // document.documentElement.addEventListener('mouseover', onMouseOver);
     }
