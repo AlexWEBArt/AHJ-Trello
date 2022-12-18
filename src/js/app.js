@@ -128,24 +128,24 @@ const onMouseUp = (e) => {
 document.addEventListener('mousemove', taskInFokus);
 
 columns.forEach((item) => item.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.task')) {
-      e.preventDefault();
+  if (e.target.closest('.task')) {
+    e.preventDefault();
 
-      actualElement = e.target.closest('.task');
-      const { width, height } = actualElement.getBoundingClientRect();
-      actualElement.classList.add('dragged');
+    actualElement = e.target.closest('.task');
+    const { width, height } = actualElement.getBoundingClientRect();
+    actualElement.classList.add('dragged');
 
-      document.removeEventListener('mousemove', taskInFokus);
-      
-      if (document.querySelector('.closed_element')) {
-        document.querySelector('.closed_element').remove();
-      }
+    document.removeEventListener('mousemove', taskInFokus);
 
-      actualElement.style.width = `${width}px`;
-      actualElement.style.height = `${height}px`;
-
-      document.documentElement.addEventListener('mousemove', onMouseMove);
-      document.documentElement.addEventListener('mouseup', onMouseUp);
-      // document.documentElement.addEventListener('mouseover', onMouseOver);
+    if (document.querySelector('.closed_element')) {
+      document.querySelector('.closed_element').remove();
     }
+
+    actualElement.style.width = `${width}px`;
+    actualElement.style.height = `${height}px`;
+
+    document.documentElement.addEventListener('mousemove', onMouseMove);
+    document.documentElement.addEventListener('mouseup', onMouseUp);
+    // document.documentElement.addEventListener('mouseover', onMouseOver);
+  }
 }));
