@@ -37,8 +37,8 @@ let actualElement;
 const onMouseMove = (evt) => {
   const { target } = evt;
 
-  actualElement.style.top = `${evt.clientY}px`;
-  actualElement.style.left = `${evt.clientX}px`;
+  actualElement.style.top = `${evt.clientY - 20}px`;
+  actualElement.style.left = `${evt.clientX - 50}px`;
 
   if (target.classList.contains('task') || target.classList.contains('title')) {
     const { y, height } = target.getBoundingClientRect();
@@ -106,10 +106,11 @@ const onMouseUp = (e) => {
 
   if (e.target.classList.contains('shadow_element')) {
     const shadowZone = mouseUpColomn.querySelector('.shadow_element');
-    actualElement.style.width = null;
-    actualElement.style.height = null;
     mouseUpColomn.insertBefore(actualElement, shadowZone);
   }
+
+  actualElement.style.width = null;
+  actualElement.style.height = null;
 
   actualElement.classList.remove('dragged');
   actualElement = undefined;
@@ -127,16 +128,15 @@ const onMouseUp = (e) => {
 document.addEventListener('mousemove', taskInFokus);
 
 columns.forEach((item) => item.addEventListener('mousedown', (e) => {
-  if (item.querySelector('.task')) {
-    const { width, height } = item.querySelector('.task').getBoundingClientRect();
-
     if (e.target.closest('.task')) {
       e.preventDefault();
 
       actualElement = e.target.closest('.task');
+      const { width, height } = actualElement.getBoundingClientRect();
       actualElement.classList.add('dragged');
 
       document.removeEventListener('mousemove', taskInFokus);
+      
       if (document.querySelector('.closed_element')) {
         document.querySelector('.closed_element').remove();
       }
@@ -148,5 +148,4 @@ columns.forEach((item) => item.addEventListener('mousedown', (e) => {
       document.documentElement.addEventListener('mouseup', onMouseUp);
       // document.documentElement.addEventListener('mouseover', onMouseOver);
     }
-  }
 }));
