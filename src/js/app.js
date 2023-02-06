@@ -106,7 +106,7 @@ const onMouseMove = (evt) => {
 };
 
 const onTouchMove = (evt) => {
-  evt.preventDefault()
+  evt.preventDefault();
   const touch = evt.targetTouches[0];
 
   actualElement.style.top = `${evt.clientY - 20}px`;
