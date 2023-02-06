@@ -26,14 +26,6 @@ buttonResetInStorage.addEventListener('click', () => {
   render.actionDefault();
 });
 
-buttonResetInStorage.addEventListener('touchstart', () => {
-  Array.from(document.querySelectorAll('.task')).forEach((item) => {
-    item.remove();
-  });
-  storage.remove();
-  render.actionDefault();
-});
-
 buttonSaveInStorage.addEventListener('click', () => {
   const columnTodo = Array.from(document.querySelector('.todo').querySelectorAll('.task_text'));
   const columnInProgress = Array.from(document.querySelector('.in_progress').querySelectorAll('.task_text'));
@@ -123,14 +115,6 @@ addNewTask.forEach((item) => {
   });
 });
 
-addNewTask.forEach((item) => {
-  item.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    openDialogBox(item);
-    item.remove(item);
-  });
-});
-
 const taskInFokus = (e) => {
   const activeTask = e.target.closest('.task');
   if (activeTask) {
@@ -213,7 +197,7 @@ columns.forEach((item) => item.addEventListener('mousedown', (e) => {
   }
 }));
 
-columns.forEach((item) => item.addEventListener('touchenter', (e) => {
+columns.forEach((item) => item.addEventListener('touchstart', (e) => {
   if (e.target.closest('.task')) {
     e.preventDefault();
 
