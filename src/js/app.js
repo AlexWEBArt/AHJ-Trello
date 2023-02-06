@@ -1,11 +1,52 @@
 import openDialogBox from './openDialogBox';
-import edit from '../img/trello_dog.png';
+import RenderingField from './RenderingField';
+import Storage from './Storage';
 
 console.log('app.js is bunled');
 
-document.querySelector('.pictures').src = edit;
+const render = new RenderingField();
+const storage = new Storage();
+const loadData = storage.load();
+const dataTrello = {};
 
-const columns = Array.from(document.querySelectorAll('.column'));
+if (loadData.toDo === undefined) {
+  render.actionDefault();
+} else {
+  render.actionStorage(loadData)
+}
+
+const buttonSaveInStorage = document.querySelector('.save_button');
+const buttonResetInStorage = document.querySelector('.reset_button');
+
+buttonResetInStorage.addEventListener('click', () => {
+  Array.from(document.querySelectorAll('.task')).forEach(item => {
+    item.remove()
+  })
+  storage.remove()
+  render.actionDefault();
+});
+
+buttonSaveInStorage.addEventListener('click', () => {
+  const columnTodo = Array.from(document.querySelector('.todo').querySelectorAll('.task_text'))
+  const columnInProgress = Array.from(document.querySelector('.in_progress').querySelectorAll('.task_text'))
+  const columnDone = Array.from(document.querySelector('.done').querySelectorAll('.task_text'))
+  dataTrello.toDo = [];
+  dataTrello.inProgress = [];
+  dataTrello.done = [];
+  columnTodo.forEach(item => {
+    dataTrello.toDo.push(item.textContent)
+  });
+  columnInProgress.forEach(item => {
+    dataTrello.inProgress.push(item.textContent)
+  });
+  columnDone.forEach(item => {
+    dataTrello.done.push(item.textContent)
+  });
+  console.log(dataTrello)
+  storage.save(dataTrello)
+});
+
+
 const addNewTask = document.querySelectorAll('.add_card');
 
 function createClosedElement() {
@@ -80,11 +121,11 @@ const taskInFokus = (e) => {
   if (activeTask) {
     const columnInFokus = activeTask.closest('.column');
     const closed = createClosedElement();
+    
+    const { width } = activeTask.getBoundingClientRect();
 
-    const { x, y, width } = activeTask.getBoundingClientRect();
-
-    closed.style.top = `${y + 2}px`;
-    closed.style.left = `${width + x - 17}px`;
+    closed.style.top = `${activeTask.offsetTop + 2}px`;
+    closed.style.left = `${width + activeTask.offsetLeft - 17}px`;
 
     if (!columnInFokus.querySelector('.closed_element')) {
       closed.addEventListener('click', () => {
@@ -121,11 +162,18 @@ const onMouseUp = (e) => {
 
   document.documentElement.removeEventListener('mousemove', onMouseMove);
   document.documentElement.removeEventListener('mouseup', onMouseUp);
+
+  document.documentElement.removeEventListener('touchmove', onMouseMove);
+  document.documentElement.removeEventListener('touchend', onMouseUp);
   // document.documentElement.removeEventListener('mouseover', onMouseOver);
   document.addEventListener('mousemove', taskInFokus);
+  document.addEventListener('touchmove', taskInFokus);
 };
 
 document.addEventListener('mousemove', taskInFokus);
+document.addEventListener('touchmove', taskInFokus);
+
+const columns = Array.from(document.querySelectorAll('.column'));
 
 columns.forEach((item) => item.addEventListener('mousedown', (e) => {
   if (e.target.closest('.task')) {
@@ -146,6 +194,29 @@ columns.forEach((item) => item.addEventListener('mousedown', (e) => {
 
     document.documentElement.addEventListener('mousemove', onMouseMove);
     document.documentElement.addEventListener('mouseup', onMouseUp);
+    // document.documentElement.addEventListener('mouseover', onMouseOver);
+  }
+}));
+
+columns.forEach((item) => item.addEventListener('touchenter', (e) => {
+  if (e.target.closest('.task')) {
+    e.preventDefault();
+
+    actualElement = e.target.closest('.task');
+    const { width, height } = actualElement.getBoundingClientRect();
+    actualElement.classList.add('dragged');
+
+    document.removeEventListener('touchmove', taskInFokus);
+
+    if (document.querySelector('.closed_element')) {
+      document.querySelector('.closed_element').remove();
+    }
+
+    actualElement.style.width = `${width}px`;
+    actualElement.style.height = `${height}px`;
+
+    document.documentElement.addEventListener('touchmove', onMouseMove);
+    document.documentElement.addEventListener('touchend', onMouseUp);
     // document.documentElement.addEventListener('mouseover', onMouseOver);
   }
 }));

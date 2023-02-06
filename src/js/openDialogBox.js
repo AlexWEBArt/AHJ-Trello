@@ -1,18 +1,25 @@
+import createImagePreview from './createImagePreview'
+
 function openDialogBox(element) {
   const dialogBox = document.createElement('DIV');
   const fileInput = document.createElement('INPUT');
+  const buttonAddImg = document.createElement('SPAN');
+  const imagePreview = document.createElement('SPAN');
   const textarea = document.createElement('TEXTAREA');
   const buttonAdd = document.createElement('BUTTON');
   const spanClosed = document.createElement('SPAN');
 
   dialogBox.classList.add('dialog_box');
   fileInput.classList.add('input_file');
+  buttonAddImg.classList.add('button_action');
+  imagePreview.classList.add('display_none');
   textarea.classList.add('textarea_task');
   buttonAdd.classList.add('button_add');
   spanClosed.classList.add('span_closed');
 
   fileInput.type = 'file';
 
+  buttonAddImg.textContent = 'Stick pic'
   textarea.placeholder = 'Enter a title for this card...';
   buttonAdd.textContent = 'Add Card';
   spanClosed.textContent = '\u2573';
@@ -21,15 +28,15 @@ function openDialogBox(element) {
   dialogBox.prepend(spanClosed);
   dialogBox.prepend(buttonAdd);
   dialogBox.prepend(textarea);
+  dialogBox.prepend(imagePreview);
+  dialogBox.prepend(buttonAddImg);
   dialogBox.prepend(fileInput);
 
   const {
-    x, y, width, height,
-  } = textarea.getBoundingClientRect();
-  fileInput.style.top = `${y + height / 4}px`;
-  fileInput.style.left = `${x}px`;
+    width, height,
+  } = buttonAddImg.getBoundingClientRect();
   fileInput.style.width = `${width}px`;
-  fileInput.style.height = `${height / 2}px`;
+  fileInput.style.height = `${height}px`;
 
   let img;
 
@@ -42,6 +49,8 @@ function openDialogBox(element) {
 
     reader.addEventListener('load', (e) => {
       img = e.target.result;
+      createImagePreview(imagePreview, img);
+      imagePreview.classList.remove('display_none');
     });
 
     reader.readAsDataURL(file);
@@ -71,7 +80,7 @@ function openDialogBox(element) {
     if (img) {
       const taskImg = document.createElement('IMG');
       taskImg.classList.add('task-image');
-      taskImg.classList.add('pictures');
+      taskImg.classList.add('picture');
       taskImg.src = img;
       newTask.prepend(taskImg);
     }

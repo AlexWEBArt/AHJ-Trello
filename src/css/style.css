@@ -53,7 +53,7 @@ h1 {
     transform: rotate(5deg);
 }
 
-.pictures {
+.picture {
     width: 100%
 }
 
@@ -64,15 +64,30 @@ h1 {
 }
 
 .dialog_box {
+    position: relative;
     display: block;
 }
 
 .input_file {
-    box-sizing: border-box;
     position: absolute;
     top: 0; left: 0; bottom: 0; right: 0; margin: 0;
     opacity: 0;
+}
+
+.button_action {
+    display: inline-flex;
     width: 100%;
+    height: 30px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+
+    background-color: rgb(145, 150, 157);
+    border-radius: 3px;
+    border: none;
+    box-shadow: 4px 4px 12px 4px rgba(0, 0, 0, 0.1);
 }
 
 .textarea_task {
@@ -134,4 +149,57 @@ h1 {
     /* margin-left: 15px; */
     font-weight: bold;
     color: rgb(145, 150, 157);
+}
+
+.display_none {
+    display: none;
+}
+
+.container_image {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.preview_image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.delete_preview {
+    position: absolute;
+    top: 1%; left: 93%; bottom: 0; right: 0; margin: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    color: rgb(145, 150, 157);
+}
+
+@media (max-width: 767px) {
+    .app_storage {
+        display: flex;
+    }
+
+    .button_action {
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .app_container,
+    .app_storage {
+        flex-direction: column;
+    }
+
+    .column {
+        box-sizing: border-box;
+        margin: auto;
+        margin-bottom: 10px;
+        width: 70%;
+        height: 1%;
+        border-radius: 3px;
+        background-color: rgb(213, 220, 232);
+    }
 }
