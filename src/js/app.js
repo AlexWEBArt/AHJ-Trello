@@ -162,15 +162,15 @@ const onMouseUp = (e) => {
   document.documentElement.removeEventListener('mousemove', onMouseMove);
   document.documentElement.removeEventListener('mouseup', onMouseUp);
 
-  document.documentElement.removeEventListener('touchmove', onMouseMove);
+  document.documentElement.removeEventListener('touchenter', onMouseMove);
   document.documentElement.removeEventListener('touchend', onMouseUp);
   // document.documentElement.removeEventListener('mouseover', onMouseOver);
   document.addEventListener('mousemove', taskInFokus);
-  document.addEventListener('touchmove', taskInFokus);
+  document.addEventListener('touchenter', taskInFokus);
 };
 
 document.addEventListener('mousemove', taskInFokus);
-document.addEventListener('touchmove', taskInFokus);
+document.addEventListener('touchenter', taskInFokus);
 
 const columns = Array.from(document.querySelectorAll('.column'));
 
@@ -205,7 +205,7 @@ columns.forEach((item) => item.addEventListener('touchstart', (e) => {
     const { width, height } = actualElement.getBoundingClientRect();
     actualElement.classList.add('dragged');
 
-    document.removeEventListener('touchmove', taskInFokus);
+    document.removeEventListener('touchenter', taskInFokus);
 
     if (document.querySelector('.closed_element')) {
       document.querySelector('.closed_element').remove();
@@ -214,7 +214,7 @@ columns.forEach((item) => item.addEventListener('touchstart', (e) => {
     actualElement.style.width = `${width}px`;
     actualElement.style.height = `${height}px`;
 
-    document.documentElement.addEventListener('touchmove', onMouseMove);
+    document.documentElement.addEventListener('touchenter', onMouseMove);
     document.documentElement.addEventListener('touchend', onMouseUp);
     // document.documentElement.addEventListener('mouseover', onMouseOver);
   }
