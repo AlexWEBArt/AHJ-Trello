@@ -12,40 +12,39 @@ const dataTrello = {};
 if (loadData.toDo === undefined) {
   render.actionDefault();
 } else {
-  render.actionStorage(loadData)
+  render.actionStorage(loadData);
 }
 
 const buttonSaveInStorage = document.querySelector('.save_button');
 const buttonResetInStorage = document.querySelector('.reset_button');
 
 buttonResetInStorage.addEventListener('click', () => {
-  Array.from(document.querySelectorAll('.task')).forEach(item => {
-    item.remove()
-  })
-  storage.remove()
+  Array.from(document.querySelectorAll('.task')).forEach((item) => {
+    item.remove();
+  });
+  storage.remove();
   render.actionDefault();
 });
 
 buttonSaveInStorage.addEventListener('click', () => {
-  const columnTodo = Array.from(document.querySelector('.todo').querySelectorAll('.task_text'))
-  const columnInProgress = Array.from(document.querySelector('.in_progress').querySelectorAll('.task_text'))
-  const columnDone = Array.from(document.querySelector('.done').querySelectorAll('.task_text'))
+  const columnTodo = Array.from(document.querySelector('.todo').querySelectorAll('.task_text'));
+  const columnInProgress = Array.from(document.querySelector('.in_progress').querySelectorAll('.task_text'));
+  const columnDone = Array.from(document.querySelector('.done').querySelectorAll('.task_text'));
   dataTrello.toDo = [];
   dataTrello.inProgress = [];
   dataTrello.done = [];
-  columnTodo.forEach(item => {
-    dataTrello.toDo.push(item.textContent)
+  columnTodo.forEach((item) => {
+    dataTrello.toDo.push(item.textContent);
   });
-  columnInProgress.forEach(item => {
-    dataTrello.inProgress.push(item.textContent)
+  columnInProgress.forEach((item) => {
+    dataTrello.inProgress.push(item.textContent);
   });
-  columnDone.forEach(item => {
-    dataTrello.done.push(item.textContent)
+  columnDone.forEach((item) => {
+    dataTrello.done.push(item.textContent);
   });
-  console.log(dataTrello)
-  storage.save(dataTrello)
-});
 
+  storage.save(dataTrello);
+});
 
 const addNewTask = document.querySelectorAll('.add_card');
 
@@ -121,7 +120,7 @@ const taskInFokus = (e) => {
   if (activeTask) {
     const columnInFokus = activeTask.closest('.column');
     const closed = createClosedElement();
-    
+
     const { width } = activeTask.getBoundingClientRect();
 
     closed.style.top = `${activeTask.offsetTop + 2}px`;

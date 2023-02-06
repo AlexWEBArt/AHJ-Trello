@@ -1,4 +1,4 @@
-import createImagePreview from './createImagePreview'
+import createImagePreview from './createImagePreview';
 
 function openDialogBox(element) {
   const dialogBox = document.createElement('DIV');
@@ -19,7 +19,7 @@ function openDialogBox(element) {
 
   fileInput.type = 'file';
 
-  buttonAddImg.textContent = 'Stick pic'
+  buttonAddImg.textContent = 'Stick pic';
   textarea.placeholder = 'Enter a title for this card...';
   buttonAdd.textContent = 'Add Card';
   spanClosed.textContent = '\u2573';

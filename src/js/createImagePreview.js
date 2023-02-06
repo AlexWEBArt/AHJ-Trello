@@ -5,7 +5,7 @@ function createImagePreview(element, img) {
   containerImage.classList.add('container_image');
   imagePreview.classList.add('preview_image');
 
-  imagePreview.src = img
+  imagePreview.src = img;
 
   element.appendChild(containerImage);
   containerImage.appendChild(imagePreview);

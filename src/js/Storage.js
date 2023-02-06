@@ -27,9 +27,7 @@ export default class Storage {
 
   remove() {
     let data = this.load();
-    data = {}
-    console.log(this.load())
+    data = {};
     this.save(data);
-    console.log(this.load())
   }
 }
