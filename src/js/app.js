@@ -161,18 +161,61 @@ const onMouseUp = (e) => {
 
   document.documentElement.removeEventListener('mousemove', onMouseMove);
   document.documentElement.removeEventListener('mouseup', onMouseUp);
-
-  document.documentElement.removeEventListener('touchenter', onMouseMove);
-  document.documentElement.removeEventListener('touchend', onMouseUp);
   // document.documentElement.removeEventListener('mouseover', onMouseOver);
   document.addEventListener('mousemove', taskInFokus);
-  document.addEventListener('touchenter', taskInFokus);
+};
+
+const onTouchEnd = (e) => {
+  const mouseUpColomn = e.target.closest('.column');
+
+  if (e.target.classList.contains('shadow_element')) {
+    const shadowZone = mouseUpColomn.querySelector('.shadow_element');
+    mouseUpColomn.insertBefore(actualElement, shadowZone);
+  }
+
+  actualElement.style.width = null;
+  actualElement.style.height = null;
+
+  actualElement.classList.remove('dragged');
+  actualElement = undefined;
+
+  if (document.querySelector('.shadow_element')) {
+    document.querySelector('.shadow_element').remove();
+  }
+
+  document.documentElement.removeEventListener('touchmove', onMouseMove);
+  document.documentElement.removeEventListener('touchend', onTouchEnd);
+  // document.documentElement.removeEventListener('mouseover', onMouseOver);
+  document.addEventListener('touchmove', taskInFokus);
 };
 
 document.addEventListener('mousemove', taskInFokus);
-document.addEventListener('touchenter', taskInFokus);
+document.addEventListener('touchmove', taskInFokus);
 
 const columns = Array.from(document.querySelectorAll('.column'));
+
+columns.forEach((item) => item.addEventListener('touchstart', (e) => {
+  if (e.target.closest('.task')) {
+    e.preventDefault();
+
+    actualElement = e.target.closest('.task');
+    const { width, height } = actualElement.getBoundingClientRect();
+    actualElement.classList.add('dragged');
+
+    document.removeEventListener('touchmove', taskInFokus);
+
+    if (document.querySelector('.closed_element')) {
+      document.querySelector('.closed_element').remove();
+    }
+
+    actualElement.style.width = `${width}px`;
+    actualElement.style.height = `${height}px`;
+
+    document.documentElement.addEventListener('touchmove', onMouseMove);
+    document.documentElement.addEventListener('touchend', onTouchEnd);
+    // document.documentElement.addEventListener('mouseover', onMouseOver);
+  }
+}));
 
 columns.forEach((item) => item.addEventListener('mousedown', (e) => {
   if (e.target.closest('.task')) {
@@ -193,29 +236,6 @@ columns.forEach((item) => item.addEventListener('mousedown', (e) => {
 
     document.documentElement.addEventListener('mousemove', onMouseMove);
     document.documentElement.addEventListener('mouseup', onMouseUp);
-    // document.documentElement.addEventListener('mouseover', onMouseOver);
-  }
-}));
-
-columns.forEach((item) => item.addEventListener('touchstart', (e) => {
-  if (e.target.closest('.task')) {
-    e.preventDefault();
-
-    actualElement = e.target.closest('.task');
-    const { width, height } = actualElement.getBoundingClientRect();
-    actualElement.classList.add('dragged');
-
-    document.removeEventListener('touchenter', taskInFokus);
-
-    if (document.querySelector('.closed_element')) {
-      document.querySelector('.closed_element').remove();
-    }
-
-    actualElement.style.width = `${width}px`;
-    actualElement.style.height = `${height}px`;
-
-    document.documentElement.addEventListener('touchenter', onMouseMove);
-    document.documentElement.addEventListener('touchend', onMouseUp);
     // document.documentElement.addEventListener('mouseover', onMouseOver);
   }
 }));
