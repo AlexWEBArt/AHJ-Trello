@@ -106,36 +106,14 @@ const onMouseMove = (evt) => {
 };
 
 const onTouchMove = (evt) => {
-  evt.preventDefault();
   const touch = evt.targetTouches[0];
+  const { target } = evt;
 
-  actualElement.style.top = `${evt.clientY - 20}px`;
-  actualElement.style.left = `${evt.clientX - 50}px`;
+  actualElement.style.top = `${touch.pageY - 20}px`;
+  actualElement.style.left = `${touch.pageX - 50}px`;
 
-  if (touch.classList.contains('task') || touch.classList.contains('title')) {
-    const { y, height } = touch.getBoundingClientRect();
-
-    const shadowElement = createShadowElement(document.querySelector('.dragged'));
-    let shadowZone;
-
-    if ((y + height / 2) > evt.clientY && !touch.classList.contains('title')) {
-      if (document.querySelector('.shadow_element')) {
-        document.querySelector('.shadow_element').remove();
-      }
-      shadowZone = touch.previousElementSibling.closest('.task') || touch.previousElementSibling.closest('h1');
-      if (shadowZone) {
-        shadowZone.insertAdjacentElement('afterend', shadowElement);
-      }
-    }
-    if ((y + height / 2) < evt.clientY) {
-      if (document.querySelector('.shadow_element')) {
-        document.querySelector('.shadow_element').remove();
-      }
-      shadowZone = touch.nextElementSibling.closest('.task') || touch.nextElementSibling.closest('.add_card');
-      if (shadowZone) {
-        shadowZone.insertAdjacentElement('beforebegin', shadowElement);
-      }
-    }
+  if ((touch.pageX + 20) < target.closest('.column').offsetLeft) {
+    target.closest('.task').remove();
   }
 };
 
@@ -231,7 +209,7 @@ columns.forEach((item) => item.addEventListener('mousedown', (e) => {
   }
 }));
 
-columns.forEach((item) => item.addEventListener('touchenter', (e) => {
+columns.forEach((item) => item.addEventListener('touchstart', (e) => {
   if (e.target.closest('.task')) {
     e.preventDefault();
 
