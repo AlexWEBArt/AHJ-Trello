@@ -9,7 +9,7 @@ const storage = new Storage();
 const loadData = storage.load();
 const dataTrello = {};
 
-if (loadData === null) {
+if (loadData === null || loadData.toDo === undefined) {
   render.actionDefault();
 } else {
   render.actionStorage(loadData);
